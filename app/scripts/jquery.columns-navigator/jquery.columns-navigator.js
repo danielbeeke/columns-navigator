@@ -49,6 +49,17 @@
                 this.loadColumn(this.element, this.options);
             }
 
+
+            $('.go-right').once().click(function() {
+                plugin.move(plugin.element, plugin.options, + 1);
+                return false;
+            });
+
+            $('.go-left').once().click(function() {
+                plugin.move(plugin.element, plugin.options, - 1);
+                return false;
+            });
+
             // Create the toggling of the scroll class.
             $(plugin.element).parent().scroll(function(event) {
                 if( $(this).scrollLeft() > 10) { $(plugin.element).addClass('has-hidden-columns'); }
@@ -129,16 +140,6 @@
                 // Attach our click handlers.
                 $('.progress-display').progressDisplay();
 
-                $('.go-right').click(function() {
-                    plugin.move(el, options, 'next');
-                    return false;
-                });
-
-                $('.go-left').click(function() {
-                    plugin.move(el, options, 'prev');
-                    return false;
-                });
-
                 $('.' + options.itemClass, el).once().click(function() {
                     // Load the new column.
                     Plugin.prototype.loadColumn(el, options, $(this).attr('data-id'), parseInt($(this).parents('ul').attr('data-depth')) + 1);
@@ -148,7 +149,20 @@
             });
         },
         move: function(el, options, direction) {
+            var plugin = this;
 
+            var scrollPos = $(plugin.element).parent().scrollLeft();
+
+            var currentStart = Math.floor(scrollPos / 280);
+
+            var nextStart = currentStart + direction;
+
+            if (nextStart >= 0 && nextStart <= $('.' + options.columnClass).length) {
+                $(plugin.element).parent().scrollTo({
+                    top: 0,
+                    left: nextStart * 280 + 'px'
+                }, 500);
+            }
         },
         setHash: function(el, options) {
             var plugin = this;
