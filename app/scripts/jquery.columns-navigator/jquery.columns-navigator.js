@@ -49,14 +49,18 @@
                 this.loadColumn(this.element, this.options);
             }
 
+            // scroll to end.
+            var maxScrollLeft = $(plugin.element).parent()[0].scrollWidth - $(plugin.element).parent()[0].clientWidth;
+            $(plugin.element).parent().scrollLeft(maxScrollLeft);
+
 
             $('.go-right').once().click(function() {
-                plugin.move(plugin.element, plugin.options, + 1);
+                plugin.moveRight(plugin.element, plugin.options);
                 return false;
             });
 
             $('.go-left').once().click(function() {
-                plugin.move(plugin.element, plugin.options, - 1);
+                plugin.moveLeft(plugin.element, plugin.options);
                 return false;
             });
 
@@ -67,10 +71,10 @@
 
                 // Add hide button class.
                 var totalWidth = parseInt(plugin.options.columnWidth) * parseInt($('.' + plugin.options.columnClass).length + 1);
-                if( $(this).scrollLeft() > 280) { $(plugin.element).removeClass('hide-left-navigation-button'); }
+                if( $(this).scrollLeft() > 230) { $(plugin.element).removeClass('hide-left-navigation-button'); }
                 else { $(plugin.element).addClass('hide-left-navigation-button'); }
 
-                if( $(this).scrollLeft() < totalWidth - parseInt($(window).width() + 280)) { $(plugin.element).removeClass('hide-right-navigation-button'); }
+                if( $(this).scrollLeft() < totalWidth - parseInt($(window).width() + 300)) { $(plugin.element).removeClass('hide-right-navigation-button'); }
                 else { $(plugin.element).addClass('hide-right-navigation-button'); }
 
             });
@@ -148,22 +152,33 @@
 
             });
         },
-        move: function(el, options, direction) {
+        moveLeft: function(el, options) {
             var plugin = this;
 
             var scrollPos = $(plugin.element).parent().scrollLeft();
-
             var currentStart = Math.floor(scrollPos / 280);
+            var nextStart = currentStart - 1;
 
-            var nextStart = currentStart + direction;
-
-            if (nextStart >= 0 && nextStart <= $('.' + options.columnClass).length) {
-                $(plugin.element).parent().scrollTo({
-                    top: 0,
-                    left: nextStart * 280 + 'px'
-                }, 500);
-            }
+            $(plugin.element).parent().scrollTo({
+                top: 0,
+                left: nextStart * 280 + 'px'
+            }, 500);
         },
+        moveRight: function(el, options, direction) {
+            var plugin = this;
+
+            var scrollPos = $(plugin.element).parent().scrollLeft();
+            var currentStart = Math.floor(scrollPos / 280);
+            var nextStart = currentStart + 1;
+            var totalColumns = $('.' + options.columnClass).length;
+            var maxScrollLeft = $(plugin.element).parent()[0].scrollWidth - $(plugin.element).parent()[0].clientWidth;
+
+            $(plugin.element).parent().scrollTo({
+                top: 0,
+                left: nextStart * 280 + 'px'
+            }, 500);
+        },
+
         setHash: function(el, options) {
             var plugin = this;
 
