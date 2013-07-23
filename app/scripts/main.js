@@ -7,6 +7,8 @@
       dataUrl: 'element'
     });
 
+    $('.progress-display').progressDisplay();
+
 
   });
 

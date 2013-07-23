@@ -9,7 +9,7 @@
             dataUrl: "value",
             columnClass: "column",
             itemClass: "item",
-            columnWidth: "300px"
+            columnWidth: "280px"
         };
 
     // The actual plugin constructor
@@ -49,6 +49,7 @@
 
         // Load a new column.
         loadColumn: function(el, options, id, depth, async) {
+            var plugin = this;
 
             // Set the url to get the html from.
             var url;
@@ -92,15 +93,7 @@
                 // Add our active class.
                 $('.' + options.itemClass + '[data-id="' + id + '"]').parent('li').addClass('active');
 
-                // Set the hash.
-                var parts = [];
-                $.each($('.' + options.columnClass, el), function(index, currentColumn) {
-                    if ($('.active .' + options.itemClass, currentColumn).attr('data-id')) {
-                        parts.push($('.active .' + options.itemClass, currentColumn).attr('data-id'));
-                    }
-                });
-
-                location.hash = parts.join('/');
+                plugin.setHash(el, options);
 
                 // Resize the wrapper.
                 $(el).css('width', parseInt(options.columnWidth) * ($('.' + options.columnClass).length + 1) + 'px');
@@ -116,6 +109,19 @@
                 });
 
             });
+        },
+        setHash: function(el, options) {
+            var plugin = this;
+
+            // Set the hash.
+            var parts = [];
+            $.each($('.' + options.columnClass, el), function(index, currentColumn) {
+                if ($('.active .' + options.itemClass, currentColumn).attr('data-id')) {
+                    parts.push($('.active .' + options.itemClass, currentColumn).attr('data-id'));
+                }
+            });
+
+            location.hash = parts.join('/');
         }
     };
 
