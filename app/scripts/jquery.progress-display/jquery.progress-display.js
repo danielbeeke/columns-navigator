@@ -24,7 +24,7 @@
             var plugin = this;
             $(plugin.element).once().addClass('progress-display').append('<span class="progress-display-label">' +
             $(plugin.element).attr('data-progress') +
-            '%</span><span class="progress-display-bar"></span>');
+            '%</span><span class="progress-display-bar"><span class="progress-display-bar-inner"></span></span>');
 
             // Set color class.
             if ($(plugin.element).attr('data-progress') <= 50) {

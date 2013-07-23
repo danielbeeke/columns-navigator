@@ -102,6 +102,7 @@
                 $(el).append(column);
 
                 // Attach our click handlers.
+                $('.progress-display').progressDisplay();
                 $('.' + options.itemClass, el).once().click(function() {
                     // Load the new column.
                     Plugin.prototype.loadColumn(el, options, $(this).attr('data-id'), parseInt($(this).parents('ul').attr('data-depth')) + 1);

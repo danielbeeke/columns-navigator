@@ -7,9 +7,6 @@
       dataUrl: 'element'
     });
 
-    $('.progress-display').progressDisplay();
-
-
   });
 
 })(jQuery);
