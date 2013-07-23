@@ -1,0 +1,9 @@
+.column {
+  width: 300px;
+  background: #eeeeee;
+  float: left;
+
+  a:link.active, a:visited.active {
+    background: green;
+  }
+}
