@@ -8,7 +8,8 @@
         defaults = {
             dataUrl: "value",
             columnClass: "column",
-            itemClass: "item"
+            itemClass: "item",
+            columnWidth: "300px"
         };
 
     // The actual plugin constructor
@@ -25,6 +26,8 @@
         // Init the plugin.
         init: function() {
             var plugin = this;
+
+            $(plugin.element).addClass('columns-navigator');
 
             var hashToSet = location.hash.substr(1);
 
@@ -82,22 +85,25 @@
                 // Remove all not valid active classes.
                 $.each($('.' + options.columnClass, el), function(index, currentColumn) {
                     if ($(currentColumn).attr('data-depth') >= depth - 1) {
-                        $('.' + options.itemClass, currentColumn).removeClass('active');
+                        $('*', currentColumn).removeClass('active');
                     }
                 });
 
                 // Add our active class.
-                $('.' + options.itemClass + '[data-id="' + id + '"]').addClass('active');
+                $('.' + options.itemClass + '[data-id="' + id + '"]').parent('li').addClass('active');
 
                 // Set the hash.
                 var parts = [];
                 $.each($('.' + options.columnClass, el), function(index, currentColumn) {
-                    if ($('.active', currentColumn).attr('data-id')) {
-                        parts.push($('.active', currentColumn).attr('data-id'));
+                    if ($('.active .' + options.itemClass, currentColumn).attr('data-id')) {
+                        parts.push($('.active .' + options.itemClass, currentColumn).attr('data-id'));
                     }
                 });
 
                 location.hash = parts.join('/');
+
+                // Resize the wrapper.
+                $(el).css('width', parseInt(options.columnWidth) * ($('.' + options.columnClass).length + 1) + 'px');
 
                 // Add our column.
                 $(el).append(column);
