@@ -27,7 +27,10 @@
         init: function() {
             var plugin = this;
 
-            $(plugin.element).addClass('columns-navigator');
+            $(plugin.element).addClass('columns-navigator').wrap('<div class="columns-navigator-wrapper" />')
+            .append('<a href="#" class="go-left navigate-button"></a><a href="#" class="go-right navigate-button"></a>');
+
+            $(plugin.element).addClass('hide-left-navigation-button').addClass('hide-right-navigation-button');
 
             var hashToSet = location.hash.substr(1);
 
@@ -45,6 +48,23 @@
             else {
                 this.loadColumn(this.element, this.options);
             }
+
+            // Create the toggling of the scroll class.
+            $(plugin.element).parent().scroll(function(event) {
+                if( $(this).scrollLeft() > 10) { $(plugin.element).addClass('has-hidden-columns'); }
+                else { $(plugin.element).removeClass('has-hidden-columns'); }
+
+                // Add hide button class.
+                var totalWidth = parseInt(plugin.options.columnWidth) * parseInt($('.' + plugin.options.columnClass).length + 1);
+                if( $(this).scrollLeft() > 280) { $(plugin.element).removeClass('hide-left-navigation-button'); }
+                else { $(plugin.element).addClass('hide-left-navigation-button'); }
+
+                if( $(this).scrollLeft() < totalWidth - parseInt($(window).width() + 280)) { $(plugin.element).removeClass('hide-right-navigation-button'); }
+                else { $(plugin.element).addClass('hide-right-navigation-button'); }
+
+            });
+
+            $(plugin.element).parent().scroll();
         },
 
         // Load a new column.
@@ -96,13 +116,29 @@
                 plugin.setHash(el, options);
 
                 // Resize the wrapper.
-                $(el).css('width', parseInt(options.columnWidth) * ($('.' + options.columnClass).length + 1) + 'px');
+                $(el).css('width', (parseInt(options.columnWidth) - 1) * ($('.' + options.columnClass).length + 1) + 'px');
+
+                var totalWidth = parseInt(options.columnWidth) * parseInt($('.' + options.columnClass).length + 1);
+
+                if (totalWidth > $(window).width()) { $(el).addClass('wider-than-sceen'); }
+                else { $(el).removeClass('wider-than-sceen'); }
 
                 // Add our column.
                 $(el).append(column);
 
                 // Attach our click handlers.
                 $('.progress-display').progressDisplay();
+
+                $('.go-right').click(function() {
+                    plugin.move(el, options, 'next');
+                    return false;
+                });
+
+                $('.go-left').click(function() {
+                    plugin.move(el, options, 'prev');
+                    return false;
+                });
+
                 $('.' + options.itemClass, el).once().click(function() {
                     // Load the new column.
                     Plugin.prototype.loadColumn(el, options, $(this).attr('data-id'), parseInt($(this).parents('ul').attr('data-depth')) + 1);
@@ -110,6 +146,9 @@
                 });
 
             });
+        },
+        move: function(el, options, direction) {
+
         },
         setHash: function(el, options) {
             var plugin = this;

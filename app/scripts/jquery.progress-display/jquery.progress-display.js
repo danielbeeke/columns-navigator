@@ -28,11 +28,11 @@
 
             // Set color class.
             if ($(plugin.element).attr('data-progress') <= 50) {
-                $(plugin.element).addClass('red');
+                $(plugin.element).addClass('red').parent().addClass('red');
             } else if ($(plugin.element).attr('data-progress') > 50 && $(plugin.element).attr('data-progress') <= 75) {
-                $(plugin.element).addClass('orange');
+                $(plugin.element).addClass('orange').parent().addClass('orange');;
             } else {
-                $(plugin.element).addClass('green');
+                $(plugin.element).addClass('green').parent().addClass('green');
             }
 
             $('.progress-display-label', plugin.element).css('left', $(plugin.element).attr('data-progress') + '%');

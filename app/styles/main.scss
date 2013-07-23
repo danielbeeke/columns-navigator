@@ -7,6 +7,7 @@ $background: #dddddd;
   background: #353535;
   height: 10px;
   display: block;
+  margin-top: 6px;
   color: #7f7f7f;
   @include transition(all 1s);
 
@@ -17,6 +18,8 @@ $background: #dddddd;
     position: absolute;
     width: 40px;
     margin-left: -20px;
+    font-size: 12px;
+    line-height: 17px;
     margin-top: -4px;
     text-align: center;
     color: #7f7f7f;
@@ -47,11 +50,19 @@ $background: #dddddd;
     .progress-display-bar {
       @include background-with-css2-fallback(linear-gradient(bottom, #2a5d00, #3f6f00));
     }
+
+    .progress-display-bar-inner {
+      @include background-with-css2-fallback(linear-gradient(bottom, #4DB400, #7FDE00));
+    }
   }
 
   &.orange {
     .progress-display-bar {
       @include background-with-css2-fallback(linear-gradient(bottom, #653200, #775000));
+    }
+
+    .progress-display-bar-inner {
+      @include background-with-css2-fallback(linear-gradient(bottom, #D76200, #FFAA00));
     }
   }
 
@@ -59,21 +70,7 @@ $background: #dddddd;
     .progress-display-bar {
       @include background-with-css2-fallback(linear-gradient(bottom, #520100, #7f0d00));
     }
-  }
 
-  &.green {
-    .progress-display-bar-inner {
-      @include background-with-css2-fallback(linear-gradient(bottom, #4DB400, #7FDE00));
-    }
-  }
-
-  &.orange {
-    .progress-display-bar-inner {
-      @include background-with-css2-fallback(linear-gradient(bottom, #D76200, #FFAA00));
-    }
-  }
-
-  &.red {
     .progress-display-bar-inner {
       @include background-with-css2-fallback(linear-gradient(bottom, #960000, #FF1A00));
     }
@@ -82,10 +79,17 @@ $background: #dddddd;
 
 html,
 body,
+.columns-navigator-wrapper,
 .columns-navigator {
+  font-family: 'Droid Sans', sans-serif;
   margin: 0;
   padding: 0;
   height: 100%;
+}
+
+.columns-navigator-wrapper {
+  width: 100%;
+  overflow: scroll;
 }
 
 .column {
@@ -104,6 +108,9 @@ body,
   border: 1px solid #414141;
 
   .item:link, .item:visited {
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 22px;
     @include transition(all .2s);
     padding: 10px 50px 10px 20px;
     display: block;
@@ -113,6 +120,22 @@ body,
     color: #000000;
     position: relative;
     text-decoration: none;
+
+    &.red {
+      background: #7f7474;
+    }
+
+    &:after {
+      content: ".";
+      display: block;
+      background: #203449 url(../images/select-dark.png) center center no-repeat;
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 18px;
+      text-indent: -9999px;
+    }
   }
 
   li.active, li:hover {
@@ -120,6 +143,14 @@ body,
       z-index: 2;
       background: white;
       border-color: #aaaaaa;
+
+      &:after {
+        background: #416892 url(../images/select.png) center center no-repeat;
+      }
+
+      &.red {
+        background: #FFE8E9;
+      }
 
       .progress-display {
         background: #6B6B6B;
@@ -145,6 +176,14 @@ body,
       background: white;
       border-color: #aaaaaa;
 
+      &:after {
+        background: #416892 url(../images/select.png) center center no-repeat;
+      }
+
+      &.red {
+        background: #FFE8E9;
+      }
+
       .progress-display {
         background: #6B6B6B;
 
@@ -159,5 +198,57 @@ body,
       }
     }
   }
+}
 
+.navigate-button {
+  @include transition(all 1s);
+  @include opacity(1);
+  height: 100%;
+  width: 280px;
+  position: absolute;
+  display: block;
+  z-index: 5;
+  cursor: pointer;
+}
+
+.go-left {
+  background: url(../images/go-left.png) center center no-repeat;
+  left: 280px;
+}
+
+.go-right {
+  background: url(../images/go-right.png) center center no-repeat;
+  right: 0px;
+}
+
+.hide-left-navigation-button {
+  .navigate-button.go-left {
+    @include opacity(0);
+    z-index: -1;
+  }
+}
+
+.hide-right-navigation-button {
+  .navigate-button.go-right {
+    @include opacity(0);
+    z-index: -1;
+  }
+}
+
+.wider-than-sceen {
+  .column[data-depth="1"] {
+    position: fixed;
+    left: 0;
+    z-index: 4;
+  }
+
+  .column[data-depth="2"] {
+    margin-left: 279px;
+  }
+}
+
+.has-hidden-columns {
+  .column[data-depth="1"] {
+    @include box-shadow(0 0 100px black);
+  }
 }
