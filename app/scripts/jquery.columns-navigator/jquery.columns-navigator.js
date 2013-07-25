@@ -5,12 +5,14 @@
 ;(function ( $, window, document, undefined ) {
     // Create the defaults once
     var pluginName = "columnsNavigator",
-        defaults = {
-            dataUrl: "value",
-            columnClass: "column",
-            itemClass: "item",
-            columnWidth: "280px"
-        };
+    defaults = {
+        dataUrl: "value",
+        columnClass: "column",
+        itemClass: "item",
+        columnWidth: "280px"
+    };
+
+    var timeout;
 
     // The actual plugin constructor
     function Plugin( element, options ) {
@@ -27,16 +29,17 @@
         init: function() {
             var plugin = this;
 
+            // Prepare elements.
             $(plugin.element).addClass('columns-navigator').wrap('<div class="columns-navigator-wrapper" />')
             .append('<a href="#" class="go-left navigate-button"></a><a href="#" class="go-right navigate-button"></a>');
 
+            // Initialy hide the navigation buttons.
             $(plugin.element).addClass('hide-left-navigation-button').addClass('hide-right-navigation-button');
 
+            // Get the path if it is.
             var hashToSet = location.hash.substr(1);
-
             if (hashToSet) {
                 hashToSet = '0/' +  hashToSet;
-
                 var parts = hashToSet.split('/');
 
                 // We can improve this serverside,
@@ -48,11 +51,6 @@
             else {
                 this.loadColumn(this.element, this.options);
             }
-
-            // scroll to end.
-            var maxScrollLeft = $(plugin.element).parent()[0].scrollWidth - $(plugin.element).parent()[0].clientWidth;
-            $(plugin.element).parent().scrollLeft(maxScrollLeft);
-
 
             $('.go-right').once().click(function() {
                 plugin.moveRight(plugin.element, plugin.options);
@@ -128,57 +126,72 @@
                 // Add our active class.
                 $('.' + options.itemClass + '[data-id="' + id + '"]').parent('li').addClass('active');
 
-                plugin.setHash(el, options);
-
-                // Resize the wrapper.
-                $(el).css('width', (parseInt(options.columnWidth) - 1) * ($('.' + options.columnClass).length + 1) + 'px');
-
-                var totalWidth = parseInt(options.columnWidth) * parseInt($('.' + options.columnClass).length + 1);
-
-                if (totalWidth > $(window).width()) { $(el).addClass('wider-than-sceen'); }
-                else { $(el).removeClass('wider-than-sceen'); }
-
                 // Add our column.
                 $(el).append(column);
 
-                // Attach our click handlers.
-                $('.progress-display').progressDisplay();
-
-                $('.' + options.itemClass, el).once().click(function() {
-                    // Load the new column.
-                    Plugin.prototype.loadColumn(el, options, $(this).attr('data-id'), parseInt($(this).parents('ul').attr('data-depth')) + 1);
-                    return false;
-                });
+                plugin.setHash(el, options);
+                plugin.redraw(el, options);
 
             });
+        },
+        getCurrentPosition: function(el, options) {
+            var scrollLeft = $(el).parent().scrollLeft();
+
+            var currentPosition = Math.ceil(scrollLeft / parseInt(options.columnWidth));
+
+            return currentPosition;
         },
         moveLeft: function(el, options) {
             var plugin = this;
 
-            var scrollPos = $(plugin.element).parent().scrollLeft();
-            var currentStart = Math.floor(scrollPos / 280);
-            var nextStart = currentStart - 1;
+            var currentPosition = this.getCurrentPosition(el, options);
 
             $(plugin.element).parent().scrollTo({
                 top: 0,
-                left: nextStart * 280 + 'px'
+                left: (currentPosition - 1) * 280 + 'px'
             }, 500);
         },
         moveRight: function(el, options, direction) {
             var plugin = this;
 
-            var scrollPos = $(plugin.element).parent().scrollLeft();
-            var currentStart = Math.floor(scrollPos / 280);
-            var nextStart = currentStart + 1;
-            var totalColumns = $('.' + options.columnClass).length;
             var maxScrollLeft = $(plugin.element).parent()[0].scrollWidth - $(plugin.element).parent()[0].clientWidth;
+            var currentPosition = this.getCurrentPosition(el, options);
+            var totalColumns = $('.' + options.columnClass).length;
+
+            var columnsFromTheRight = totalColumns - (currentPosition + 1);
+
+            console.log(columnsFromTheRight);
 
             $(plugin.element).parent().scrollTo({
                 top: 0,
-                left: nextStart * 280 + 'px'
+                left: maxScrollLeft - (columnsFromTheRight * 280) + 'px'
             }, 500);
         },
+        redraw: function(el, options) {
+            var plugin = this;
 
+            // Resize the wrapper.
+            var totalWidth = (parseInt(options.columnWidth) -1 ) * parseInt($('.' + options.columnClass).length);
+            $(el).css('width', totalWidth + 'px');
+
+            if (totalWidth > $(window).width()) { $(el).addClass('wider-than-sceen'); }
+            else { $(el).removeClass('wider-than-sceen'); }
+
+
+            // Attach our click handlers.
+            $('.progress-display').progressDisplay();
+
+            $('.' + options.itemClass, el).once().click(function() {
+                // Load the new column.
+                Plugin.prototype.loadColumn(el, options, $(this).attr('data-id'), parseInt($(this).parents('ul').attr('data-depth')) + 1);
+                return false;
+            });
+
+            timeout = setTimeout(function() {
+                var maxScrollLeft = $(el).parent()[0].scrollWidth - $(el).parent()[0].clientWidth;
+                $(el).parent().scrollLeft(maxScrollLeft);
+            }, 90);
+        },
         setHash: function(el, options) {
             var plugin = this;
 
