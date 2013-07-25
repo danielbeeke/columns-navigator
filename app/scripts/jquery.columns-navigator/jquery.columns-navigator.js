@@ -64,17 +64,7 @@
 
             // Create the toggling of the scroll class.
             $(plugin.element).parent().scroll(function(event) {
-                if( $(this).scrollLeft() > 10) { $(plugin.element).addClass('has-hidden-columns'); }
-                else { $(plugin.element).removeClass('has-hidden-columns'); }
-
-                // Add hide button class.
-                var totalWidth = parseInt(plugin.options.columnWidth) * parseInt($('.' + plugin.options.columnClass).length + 1);
-                if( $(this).scrollLeft() > 10) { $(plugin.element).removeClass('hide-left-navigation-button'); }
-                else { $(plugin.element).addClass('hide-left-navigation-button'); }
-
-                if( $(this).scrollLeft() < totalWidth - parseInt($(window).width() + 289)) { $(plugin.element).removeClass('hide-right-navigation-button'); }
-                else { $(plugin.element).addClass('hide-right-navigation-button'); }
-
+                plugin.hideNavigationCheck();
             });
 
             $(window).resize(function() {
@@ -96,6 +86,7 @@
             if (async === 'undefined') {
                 async = true;
             }
+            $(plugin.element).addClass('hide-right-navigation-button');
 
             $.ajax({
                 url: url,
@@ -136,6 +127,21 @@
                 plugin.redraw(el, options);
 
             });
+        },
+        hideNavigationCheck: function(el, options) {
+            var plugin = this;
+            var wrapper = $(plugin.element).parent();
+
+            if( $(wrapper).scrollLeft() > 10) { $(plugin.element).addClass('has-hidden-columns'); }
+            else { $(plugin.element).removeClass('has-hidden-columns'); }
+
+            // Add hide button class.
+            var totalWidth = parseInt(plugin.options.columnWidth) * parseInt($('.' + plugin.options.columnClass).length + 1);
+            if( $(wrapper).scrollLeft() > 10) { $(plugin.element).removeClass('hide-left-navigation-button'); }
+            else { $(plugin.element).addClass('hide-left-navigation-button'); }
+
+            if( $(wrapper).scrollLeft() < totalWidth - parseInt($(window).width() + 300)) { $(plugin.element).removeClass('hide-right-navigation-button'); }
+            else { $(plugin.element).addClass('hide-right-navigation-button'); }
         },
         getCurrentPosition: function(el, options) {
             var scrollLeft = $(el).parent().scrollLeft();
@@ -191,8 +197,12 @@
 
             timeout = setTimeout(function() {
                 var maxScrollLeft = $(el).parent()[0].scrollWidth - $(el).parent()[0].clientWidth;
-                $(el).parent().scrollLeft(maxScrollLeft);
-            }, 90);
+
+                $(el).parent().stop().scrollTo({
+                    top: 0,
+                    left: maxScrollLeft + 'px'
+                }, 500);
+            }, 200);
         },
         setHash: function(el, options) {
             var plugin = this;
