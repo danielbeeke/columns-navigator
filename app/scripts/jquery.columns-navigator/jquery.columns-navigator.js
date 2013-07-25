@@ -30,7 +30,7 @@
             var plugin = this;
 
             // Prepare elements.
-            $(plugin.element).addClass('columns-navigator').wrap('<div class="columns-navigator-wrapper" />')
+            $(plugin.element).addClass('columns-navigator').wrap('<div class="columns-navigator-outer-wrapper" />').wrap('<div class="columns-navigator-wrapper" />')
             .append('<a href="#" class="go-left navigate-button"></a><a href="#" class="go-right navigate-button"></a>');
 
             // Initialy hide the navigation buttons.
@@ -69,15 +69,18 @@
 
                 // Add hide button class.
                 var totalWidth = parseInt(plugin.options.columnWidth) * parseInt($('.' + plugin.options.columnClass).length + 1);
-                if( $(this).scrollLeft() > 230) { $(plugin.element).removeClass('hide-left-navigation-button'); }
+                if( $(this).scrollLeft() > 10) { $(plugin.element).removeClass('hide-left-navigation-button'); }
                 else { $(plugin.element).addClass('hide-left-navigation-button'); }
 
-                if( $(this).scrollLeft() < totalWidth - parseInt($(window).width() + 300)) { $(plugin.element).removeClass('hide-right-navigation-button'); }
+                if( $(this).scrollLeft() < totalWidth - parseInt($(window).width() + 289)) { $(plugin.element).removeClass('hide-right-navigation-button'); }
                 else { $(plugin.element).addClass('hide-right-navigation-button'); }
 
             });
 
-            $(plugin.element).parent().scroll();
+            $(window).resize(function() {
+                $(plugin.element).parent().scroll();
+            });
+
         },
 
         // Load a new column.
@@ -157,10 +160,9 @@
             var maxScrollLeft = $(plugin.element).parent()[0].scrollWidth - $(plugin.element).parent()[0].clientWidth;
             var currentPosition = this.getCurrentPosition(el, options);
             var totalColumns = $('.' + options.columnClass).length;
+            var columnsOnPage = Math.floor($(plugin.element).parent()[0].clientWidth / 280);
 
-            var columnsFromTheRight = totalColumns - (currentPosition + 1);
-
-            console.log(columnsFromTheRight);
+            var columnsFromTheRight = totalColumns - columnsOnPage - currentPosition - 1;
 
             $(plugin.element).parent().scrollTo({
                 top: 0,

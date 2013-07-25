@@ -87,9 +87,16 @@ body,
   height: 100%;
 }
 
+.columns-navigator-outer-wrapper {
+  overflow-y: hidden;
+  height: 100%;
+}
+
 .columns-navigator-wrapper {
   width: 100%;
-  overflow: scroll;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  height: 110%;
 }
 
 .column {
@@ -106,6 +113,12 @@ body,
   margin: 0;
   margin-right: -1px;
   border: 1px solid #414141;
+
+  li {
+    float: left;
+    display: block;
+    width: 100%;
+  }
 
   .item:link, .item:visited {
     overflow: hidden;
