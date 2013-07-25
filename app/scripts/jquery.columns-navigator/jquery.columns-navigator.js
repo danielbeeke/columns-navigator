@@ -64,7 +64,9 @@
 
             // Create the toggling of the scroll class.
             $(plugin.element).parent().scroll(function(event) {
-                plugin.hideNavigationCheck();
+                setTimeout(function() {
+                    plugin.hideNavigationCheck();
+                }, 100);
             });
 
             $(window).resize(function() {
@@ -188,6 +190,25 @@
 
             // Attach our click handlers.
             $('.progress-display').progressDisplay();
+
+            // Add the custom scrollbars.
+            $('.column').once('customscroll').customscroll({
+                show: {
+                    on: 'mouseenter',
+                    effect: 'show',
+                    speed: 0
+                },
+                hide: {
+                    on: 'mouseleave',
+                    effect: 'hide',
+                    speed: 0,
+                    delay: 0
+                },
+                grow: {
+                    size: 12,
+                    speed: 200
+                }
+            });
 
             $('.' + options.itemClass, el).once().click(function() {
                 // Load the new column.
