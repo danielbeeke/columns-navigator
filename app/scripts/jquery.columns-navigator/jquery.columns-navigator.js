@@ -121,6 +121,16 @@
 
                 // Add our active class.
                 $('.' + options.itemClass + '[data-id="' + id + '"]').parent('li').addClass('active');
+                var activeParent = $('.' + options.itemClass + '[data-id="' + id + '"]').parents('.column');
+
+                var offset = $('.active', activeParent).offset();
+
+                if (offset) {
+                    $(activeParent).stop().scrollTo({
+                        top: offset.top + 'px',
+                        left: 0 + 'px'
+                    });
+                }
 
                 // Add our column.
                 $(el).append(column);

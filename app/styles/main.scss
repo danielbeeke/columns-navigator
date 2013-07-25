@@ -94,6 +94,8 @@ body,
 
 .columns-navigator-wrapper {
   width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
 }
 
 .column {
