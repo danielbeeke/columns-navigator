@@ -216,13 +216,16 @@ body,
 
 .navigate-button {
   @include transition(all 1s);
-  @include opacity(1);
+  @include opacity(0.3);
   height: 100%;
   width: 280px;
   position: absolute;
   display: block;
   z-index: 5;
   cursor: pointer;
+  &:hover {
+    @include opacity(1);
+  }
 }
 
 .go-left {
@@ -242,10 +245,40 @@ body,
   }
 }
 
+.shadow-right {
+  @include transition(1s);
+  @include opacity(1);
+  visibility: visible;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 280px;
+  z-index: 4;
+  .inner {
+    @include box-shadow(-10px 0 100px black);
+    content: ".";
+    display: block;
+    height: 100%;
+    position: absolute;
+    right: -280px;
+    text-indent: -9999px;
+    width: 280px;
+    overflow: hidden;
+  }
+}
+
 .hide-right-navigation-button {
   .navigate-button.go-right {
     @include opacity(0);
     z-index: -1;
+    visibility: hidden;
+  }
+
+  .shadow-right {
+    visibility: hidden;
+    @include opacity(0);
   }
 }
 

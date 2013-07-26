@@ -31,10 +31,17 @@
 
             // Prepare elements.
             $(plugin.element).addClass('columns-navigator').wrap('<div class="columns-navigator-outer-wrapper" />').wrap('<div class="columns-navigator-wrapper" />')
-            .append('<a href="#" class="go-left navigate-button"></a><a href="#" class="go-right navigate-button"></a>');
+            .append('<div class="shadow-right"><div class="inner"></div></div><a href="#" class="go-left navigate-button"></a><a href="#" class="go-right navigate-button"></a>');
 
             // Initialy hide the navigation buttons.
             $(plugin.element).addClass('hide-left-navigation-button').addClass('hide-right-navigation-button');
+
+            // Add the custom scrollbars.
+            // SOmehow scrollbars inside other scrollbars don't work.
+            // $(plugin.element).parent().once('mCustomScrollbar').mCustomScrollbar({
+            //     scrollInertia: 0,
+            //     horizontalScroll: true
+            // });
 
             // Get the path if it is.
             var hashToSet = location.hash.substr(1);
@@ -62,9 +69,11 @@
                 return false;
             });
 
+            plugin.hideNavigationCheck();
+
             // Create the toggling of the scroll class.
             $(plugin.element).parent().scroll(function(event) {
-                setTimeout(function() {
+                var timeout = setTimeout(function() {
                     plugin.hideNavigationCheck();
                 }, 100);
             });
@@ -211,6 +220,8 @@
                 Plugin.prototype.loadColumn(el, options, $(this).attr('data-id'), parseInt($(this).parents('ul').attr('data-depth')) + 1);
                 return false;
             });
+
+            clearTimeout(timeout);
 
             timeout = setTimeout(function() {
                 var maxScrollLeft = $(el).parent()[0].scrollWidth - $(el).parent()[0].clientWidth;
