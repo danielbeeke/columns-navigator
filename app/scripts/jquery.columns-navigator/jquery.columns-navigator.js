@@ -158,7 +158,7 @@
         getCurrentPosition: function(el, options) {
             var scrollLeft = $(el).parent().scrollLeft();
 
-            var currentPosition = Math.ceil(scrollLeft / parseInt(options.columnWidth));
+            var currentPosition = Math.floor(scrollLeft / parseInt(options.columnWidth));
 
             return currentPosition;
         },
@@ -180,7 +180,7 @@
             var totalColumns = $('.' + options.columnClass).length;
             var columnsOnPage = Math.floor($(plugin.element).parent()[0].clientWidth / 280);
 
-            var columnsFromTheRight = totalColumns - columnsOnPage - currentPosition - 1;
+            var columnsFromTheRight = totalColumns - columnsOnPage - currentPosition - 2;
 
             $(plugin.element).parent().scrollTo({
                 top: 0,
@@ -202,22 +202,8 @@
             $('.progress-display').progressDisplay();
 
             // Add the custom scrollbars.
-            $('.column').once('customscroll').customscroll({
-                show: {
-                    on: 'mouseenter',
-                    effect: 'show',
-                    speed: 0
-                },
-                hide: {
-                    on: 'mouseleave',
-                    effect: 'hide',
-                    speed: 0,
-                    delay: 0
-                },
-                grow: {
-                    size: 12,
-                    speed: 200
-                }
+            $('.column').once('mCustomScrollbar').mCustomScrollbar({
+                scrollInertia: 0
             });
 
             $('.' + options.itemClass, el).once().click(function() {
