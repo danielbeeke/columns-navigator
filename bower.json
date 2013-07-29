@@ -4,7 +4,7 @@
   "dependencies": {
     "modernizr": "~2.6.2",
     "jquery": "~1.9.1",
-    "jBreadCrumb": "c2210282290a9a1346679948e7cc6616d0e8b2ac",
+    "jBreadCrumb": "https://github.com/mrjasonroy/jBreadCrumb.git",
     "jquery.scrollTo": "~1.4.6",
     "malihu-custom-scrollbar-plugin": "dc8c78e1ee493b4a59c0d7de2e3ed11b6c447c83",
     "jquery-once": "~1.2.3"
