@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "dependencies": {
     "modernizr": "~2.6.2",
-    "jquery": "~1.9.1"
+    "jquery": "~1.9.1",
+    "jBreadCrumb",
+    "jquery.scrollTo": "~1.4.6",
+    "malihu-custom-scrollbar-plugin",
+    "jquery-once": "~1.2.3"
   },
   "devDependencies": {}
 }

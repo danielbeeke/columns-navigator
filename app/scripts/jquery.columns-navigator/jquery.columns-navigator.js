@@ -36,6 +36,9 @@
             // Initialy hide the navigation buttons.
             $(plugin.element).addClass('hide-left-navigation-button').addClass('hide-right-navigation-button');
 
+            // Add the breadcrumb.
+             $(plugin.element).parent().prepend('<div class="columns-breadcrumb"></div>');
+
             // Add the custom scrollbars.
             // SOmehow scrollbars inside other scrollbars don't work.
             // $(plugin.element).parent().once('mCustomScrollbar').mCustomScrollbar({
@@ -153,8 +156,8 @@
             var plugin = this;
             var wrapper = $(plugin.element).parent();
 
-            if( $(wrapper).scrollLeft() > 10) { $(plugin.element).addClass('has-hidden-columns'); }
-            else { $(plugin.element).removeClass('has-hidden-columns'); }
+            if( $(wrapper).scrollLeft() > 10) { $(plugin.element).addClass('has-hidden-columns').removeClass('no-hidden-columns'); }
+            else { $(plugin.element).removeClass('has-hidden-columns').addClass('no-hidden-columns'); }
 
             // Add hide button class.
             var totalWidth = parseInt(plugin.options.columnWidth) * parseInt($('.' + plugin.options.columnClass).length + 1);
