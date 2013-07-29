@@ -94,6 +94,22 @@ body,
   height: 100%;
 }
 
+.columns-breadcrumb {
+  height: 40px;
+  position: absolute;
+  width: 100%;
+  background: green;
+  z-index: 8;
+  display: block;
+  margin: 0;
+  padding: 0;
+  @include box-sizing(border-box);
+
+  li {
+    float: left;
+  }
+}
+
 .columns-navigator-wrapper {
   width: 100%;
   overflow-x: scroll;
@@ -114,6 +130,7 @@ body,
   margin: 0;
   margin-right: -1px;
   border: 1px solid #414141;
+  padding-top: 40px;
 
   li {
     // float: left;
@@ -301,13 +318,115 @@ body,
 }
 
 .mCustomScrollBox {
+  overflow: visible !important;
+
   .mCSB_scrollTools {
     @include transition(1s);
     @include opacity(0);
+    right: -4px;
+    z-index: 13;
+
+    .mCSB_dragger_bar {
+      width: 6px;
+    }
+
+    .mCSB_draggerRail {
+      background: none;
+    }
   }
 
   &:hover {
     @include opacity(1);
   }
+}
+
+.breadCrumb
+{
+  margin: 0;
+  padding: 0;
+  float: left;
+  display: block;
+  height: 21px;
+  overflow: hidden;
+  width: 990px;
+  padding:5px;
+  border:solid 1px #dedede;
+  background:#fff;
+}
+.breadCrumb ul
+{
+  margin: 0;
+  padding: 0;
+  height: 21px;
+  display: block;
+}
+.breadCrumb ul li
+{
+  display: block;
+  float: left;
+  position: relative;
+  height: 21px;
+  overflow: hidden;
+  line-height: 21px;
+  margin: 0px 6px 0px 0;
+  padding: 0px 10px 0px 0;
+  font-size: .9167em;
+  background: url(../Images/Chevron.gif) no-repeat 100% 0;
+  min-width: 30px;
+}
+.breadCrumb ul li div.chevronOverlay
+{
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 2;
+}
+.breadCrumb ul li span
+{
+  display: block;
+  overflow: hidden;
+  overflow: hidden;
+  vertical-align: middle;
+  -webkit-mask-image: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,1)), color-stop(1%,rgba(255,255,255,0.99)), color-stop(100%,rgba(255,255,255,0.01)));
+}
+.breadCrumb ul li span:hover
+{
+  -webkit-mask-image:none;
+}
+.breadCrumb ul li a
+{
+  display: block;
+  position: relative;
+  height: 21px;
+  line-height: 21px;
+  overflow: hidden;
+  float: left;
+}
+.breadCrumb ul li.first a
+{
+  height: 16px !important;
+  text-indent:-1000em;
+  width:16px;
+  padding: 0;
+  margin-top: 2px;
+  overflow: hidden;
+  background:url(../Images/IconHome.gif) no-repeat 0 0;
+}
+.breadCrumb ul li.first a:hover
+{
+  background-position: 0 -16px;
+}
+.breadCrumb ul li.last
+{
+  background: none;
+  margin-right: 0;
+  padding-right: 0;
+}
+.chevronOverlay
+{
+  display: none;
+  background: url(../Images/ChevronOverlay.png) no-repeat 100% 0;
+  width: 13px;
+  height: 20px;
 }
 

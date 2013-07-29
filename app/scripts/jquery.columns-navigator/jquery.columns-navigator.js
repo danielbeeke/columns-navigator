@@ -7,6 +7,8 @@
     var pluginName = "columnsNavigator",
     defaults = {
         dataUrl: "value",
+        dataUrlWithParents: "value",
+        dataUrlSeperator: "-",
         columnClass: "column",
         itemClass: "item",
         columnWidth: "280px"
@@ -37,10 +39,10 @@
             $(plugin.element).addClass('hide-left-navigation-button').addClass('hide-right-navigation-button');
 
             // Add the breadcrumb.
-             $(plugin.element).parent().prepend('<div class="columns-breadcrumb"></div>');
+             $(plugin.element).parent().prepend('<div class="columns-breadcrumb"><ul class="columns-breadcrumb-ul"></ul></div>');
 
             // Add the custom scrollbars.
-            // SOmehow scrollbars inside other scrollbars don't work.
+            // Somehow scrollbars inside other scrollbars don't work.
             // $(plugin.element).parent().once('mCustomScrollbar').mCustomScrollbar({
             //     scrollInertia: 0,
             //     horizontalScroll: true
@@ -49,14 +51,7 @@
             // Get the path if it is.
             var hashToSet = location.hash.substr(1);
             if (hashToSet) {
-                hashToSet = '0/' +  hashToSet;
-                var parts = hashToSet.split('/');
-
-                // We can improve this serverside,
-                // by loading all ul's next to each other.
-                $.each(parts, function(index, part) {
-                    plugin.loadColumn(plugin.element, plugin.options, part, index + 1, false);
-                });
+                plugin.loadColumn(plugin.element, plugin.options, hashToSet, 0, true);
             }
             else {
                 this.loadColumn(this.element, this.options);
@@ -88,37 +83,29 @@
         },
 
         // Load a new column.
-        loadColumn: function(el, options, id, depth, async) {
+        loadColumn: function(el, options, id, depth, withParents) {
             var plugin = this;
 
             // Set the url to get the html from.
             var url;
             if (!id) { id = 0 }
-            url = options.dataUrl + '-' + id + '.html'
-
-            // Set the default for async.
-            if (async === 'undefined') {
-                async = true;
+            if (withParents) {
+                url = options.dataUrlWithParents + options.dataUrlSeperator + id + '.html'
             }
+            else {
+                url = options.dataUrl + options.dataUrlSeperator + id + '.html'
+            }
+
             $(plugin.element).addClass('hide-right-navigation-button');
 
             $.ajax({
                 url: url,
-                async: async
             }).success(function(html) {
 
                 var column = $(html);
 
-                // Set the column depth.
-                if (!depth) { $(column).attr('data-depth', 0); }
-                else { $(column).attr('data-depth', depth); }
-
-                // Set the column id.
-                if (!id) { $(column).attr('data-id', 0); }
-                else { $(column).attr('data-id', id); }
-
-                // Remove all the columns that aren't needed.
-                $('.' + options.columnClass).each(function(index, currentColumn) {
+                 // Remove all the columns that aren't needed.
+                $('.' + options.columnClass, el).each(function(index, currentColumn) {
                     if ($(currentColumn).attr('data-depth') >= depth) {
                         $(currentColumn).remove();
                     }
@@ -147,7 +134,14 @@
                 // Add our column.
                 $(el).append(column);
 
-                plugin.setHash(el, options);
+                // Add depths.
+                $('.' + options.columnClass, el).each(function(index, currentColumn) {
+                    $(currentColumn).attr('data-depth', index);
+                    $('.' + options.columnClass + ' a[data-id="' + $(currentColumn).attr('data-id') + '"]', el).parent().addClass('active');
+                });
+
+
+                plugin.setHashAndBreadcrumb(el, options);
                 plugin.redraw(el, options);
 
             });
@@ -179,10 +173,10 @@
 
             var currentPosition = this.getCurrentPosition(el, options);
 
-            $(plugin.element).parent().scrollTo({
+            $(plugin.element).parent().stop().scrollTo({
                 top: 0,
                 left: (currentPosition - 1) * 280 + 'px'
-            }, 500);
+            }, 200);
         },
         moveRight: function(el, options, direction) {
             var plugin = this;
@@ -194,10 +188,10 @@
 
             var columnsFromTheRight = totalColumns - columnsOnPage - currentPosition - 2;
 
-            $(plugin.element).parent().scrollTo({
+            $(plugin.element).parent().stop().scrollTo({
                 top: 0,
                 left: maxScrollLeft - (columnsFromTheRight * 280) + 'px'
-            }, 500);
+            }, 200);
         },
         redraw: function(el, options) {
             var plugin = this;
@@ -235,18 +229,28 @@
                 }, 500);
             }, 200);
         },
-        setHash: function(el, options) {
+        setHashAndBreadcrumb: function(el, options) {
             var plugin = this;
 
             // Set the hash.
-            var parts = [];
-            $.each($('.' + options.columnClass, el), function(index, currentColumn) {
-                if ($('.active .' + options.itemClass, currentColumn).attr('data-id')) {
-                    parts.push($('.active .' + options.itemClass, currentColumn).attr('data-id'));
-                }
+            if ($('.' + options.columnClass, el).length > 1) {
+                location.hash = $('.' + options.columnClass + ':last', el).attr('data-id');
+            }
+            else {
+                location.hash = '';
+            }
+
+            // Set breadcrumb.
+            var crumbs = [];
+            $.each($('.' + options.columnClass + ' .active', el), function(index, item) {
+                var clonedItem = $(item).clone();
+                clonedItem.find('span').remove();
+                crumbs.push($(clonedItem).text());
             });
 
-            location.hash = parts.join('/');
+            $('.columns-breadcrumb-ul', $(el).parent()).html('<li>' + crumbs.join('</li><li>') + '</li>').jBreadCrumb({
+                easing:'swing'
+            });
         }
     };
 

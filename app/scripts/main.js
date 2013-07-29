@@ -4,7 +4,8 @@
 
 
     $('#columns-navigator').columnsNavigator({
-      dataUrl: 'element'
+      dataUrl: 'element',
+      dataUrlWithParents: 'element-all'
     });
 
   });
