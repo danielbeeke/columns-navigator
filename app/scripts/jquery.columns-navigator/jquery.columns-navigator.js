@@ -11,10 +11,12 @@
         dataUrlSeperator: "-",
         columnClass: "column",
         itemClass: "item",
-        columnWidth: "280px"
+        columnWidth: "280px",
+        dataUrlExtensionIncludingDot: '.html'
     };
 
     var timeout;
+    var breadCrumbFixTimeout;
 
     // The actual plugin constructor
     function Plugin( element, options ) {
@@ -39,7 +41,7 @@
             $(plugin.element).addClass('hide-left-navigation-button').addClass('hide-right-navigation-button');
 
             // Add the breadcrumb.
-             $(plugin.element).parent().prepend('<div class="columns-breadcrumb"><ul class="columns-breadcrumb-ul"></ul></div>');
+             $(plugin.element).parent().prepend('<div class="columns-breadcrumb-wrapper"><div class="columns-breadcrumb"><ul class="columns-breadcrumb-ul"></ul></div></div>');
 
             // Add the custom scrollbars.
             // Somehow scrollbars inside other scrollbars don't work.
@@ -72,12 +74,14 @@
             // Create the toggling of the scroll class.
             $(plugin.element).parent().scroll(function(event) {
                 var timeout = setTimeout(function() {
-                    plugin.hideNavigationCheck();
+                    plugin.hideNavigationCheck(plugin.element, plugin.options);
                 }, 100);
             });
 
             $(window).resize(function() {
                 $(plugin.element).parent().scroll();
+                plugin.redraw(plugin.element, plugin.options);
+                plugin.fixBreadCrumb(plugin.element, plugin.options);
             });
 
         },
@@ -90,10 +94,10 @@
             var url;
             if (!id) { id = 0 }
             if (withParents) {
-                url = options.dataUrlWithParents + options.dataUrlSeperator + id + '.html'
+                url = options.dataUrlWithParents + options.dataUrlSeperator + id + options.dataUrlExtensionIncludingDot
             }
             else {
-                url = options.dataUrl + options.dataUrlSeperator + id + '.html'
+                url = options.dataUrl + options.dataUrlSeperator + id + options.dataUrlExtensionIncludingDot
             }
 
             $(plugin.element).addClass('hide-right-navigation-button');
@@ -158,7 +162,7 @@
             if( $(wrapper).scrollLeft() > 10) { $(plugin.element).removeClass('hide-left-navigation-button'); }
             else { $(plugin.element).addClass('hide-left-navigation-button'); }
 
-            if( $(wrapper).scrollLeft() < totalWidth - parseInt($(window).width() + 300)) { $(plugin.element).removeClass('hide-right-navigation-button'); }
+            if( $(wrapper).scrollLeft() < totalWidth - parseInt($(el).parent().parent().width() + 300)) { $(plugin.element).removeClass('hide-right-navigation-button'); }
             else { $(plugin.element).addClass('hide-right-navigation-button'); }
         },
         getCurrentPosition: function(el, options) {
@@ -200,8 +204,8 @@
             var totalWidth = (parseInt(options.columnWidth) -1 ) * parseInt($('.' + options.columnClass).length);
             $(el).css('width', totalWidth + 'px');
 
-            if (totalWidth > $(window).width()) { $(el).addClass('wider-than-sceen'); }
-            else { $(el).removeClass('wider-than-sceen'); }
+            if (totalWidth > $(el).parent().width()) { $(el).addClass('wider-than-screen'); }
+            else { $(el).removeClass('wider-than-screen'); }
 
 
             // Attach our click handlers.
@@ -245,12 +249,33 @@
             $.each($('.' + options.columnClass + ' .active', el), function(index, item) {
                 var clonedItem = $(item).clone();
                 clonedItem.find('span').remove();
-                crumbs.push($(clonedItem).text());
+                crumbs.push('<a href="#' + $('a', clonedItem).attr('data-id') + '">' + $(clonedItem).text() + '</a>');
             });
 
-            $('.columns-breadcrumb-ul', $(el).parent()).html('<li>' + crumbs.join('</li><li>') + '</li>').jBreadCrumb({
-                easing:'swing'
+            $('.columns-breadcrumb-ul', $(el).parent()).html('<li>' + crumbs.join('</li><li>') + '</li>');
+            $.each($('.columns-breadcrumb-ul li', $(el).parent()), function(index, item) {
+                $(item).hover(function() {
+                    $(this).css('width', $('a', this).width() + 23);
+                }, function() {
+                    $(this).removeAttr('style');
+                });
             });
+            plugin.fixBreadCrumb(el, options);
+        },
+        fixBreadCrumb: function(el, options) {
+            clearTimeout(breadCrumbFixTimeout);
+            breadCrumbFixTimeout = setTimeout(function() {
+                if ($('.columns-breadcrumb-ul').width() > $(el).parent().width()) {
+                    $.each($('.columns-breadcrumb-ul li', $(el).parent()), function(index, item) {
+                        if (index <  $('.columns-breadcrumb-ul li').length - 1 && $('.columns-breadcrumb-ul').width() > $(el).parent().width()) {
+                            $(item).addClass('cut-off');
+                        }
+                    });
+                }
+                else {
+                    $('.columns-breadcrumb-ul li.cut-off', $(el).parent()).removeClass('cut-off');
+                }
+            }, 500);
         }
     };
 

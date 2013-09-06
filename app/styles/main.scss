@@ -90,30 +90,16 @@ body,
 }
 
 .columns-navigator-outer-wrapper {
-  overflow-y: hidden;
+  overflow: hidden;
   height: 100%;
-}
-
-.columns-breadcrumb {
-  height: 40px;
-  position: absolute;
-  width: 100%;
-  background: green;
-  z-index: 8;
-  display: block;
-  margin: 0;
-  padding: 0;
-  @include box-sizing(border-box);
-
-  li {
-    float: left;
-  }
+  position: relative;
 }
 
 .columns-navigator-wrapper {
   width: 100%;
   overflow-x: scroll;
   overflow-y: hidden;
+  float: left;
 }
 
 .column {
@@ -299,20 +285,20 @@ body,
   }
 }
 
-.wider-than-sceen {
-  .column[data-depth="1"] {
+.wider-than-screen {
+  .column[data-depth="0"] {
     position: fixed;
     left: 0;
     z-index: 4;
   }
 
-  .column[data-depth="2"] {
+  .column[data-depth="1"] {
     margin-left: 279px;
   }
 }
 
 .has-hidden-columns {
-  .column[data-depth="1"] {
+  .column[data-depth="0"] {
     @include box-shadow(0 0 100px black);
   }
 }
@@ -340,93 +326,66 @@ body,
   }
 }
 
-.breadCrumb
-{
-  margin: 0;
-  padding: 0;
-  float: left;
-  display: block;
-  height: 21px;
-  overflow: hidden;
-  width: 990px;
-  padding:5px;
-  border:solid 1px #dedede;
-  background:#fff;
-}
-.breadCrumb ul
-{
-  margin: 0;
-  padding: 0;
-  height: 21px;
-  display: block;
-}
-.breadCrumb ul li
-{
-  display: block;
-  float: left;
-  position: relative;
-  height: 21px;
-  overflow: hidden;
-  line-height: 21px;
-  margin: 0px 6px 0px 0;
-  padding: 0px 10px 0px 0;
-  font-size: .9167em;
-  background: url(../Images/Chevron.gif) no-repeat 100% 0;
-  min-width: 30px;
-}
-.breadCrumb ul li div.chevronOverlay
-{
+.columns-breadcrumb {
+  height: 40px;
   position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 2;
-}
-.breadCrumb ul li span
-{
+  width: 999999px;
+  background: white;
+  left: 0;
+  z-index: 8;
   display: block;
-  overflow: hidden;
-  overflow: hidden;
-  vertical-align: middle;
-  -webkit-mask-image: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,1)), color-stop(1%,rgba(255,255,255,0.99)), color-stop(100%,rgba(255,255,255,0.01)));
-}
-.breadCrumb ul li span:hover
-{
-  -webkit-mask-image:none;
-}
-.breadCrumb ul li a
-{
-  display: block;
-  position: relative;
-  height: 21px;
-  line-height: 21px;
-  overflow: hidden;
-  float: left;
-}
-.breadCrumb ul li.first a
-{
-  height: 16px !important;
-  text-indent:-1000em;
-  width:16px;
+  margin: 0;
   padding: 0;
-  margin-top: 2px;
+  @include box-sizing(border-box);
+
+  li {
+    @include inline-block;
+    white-space: nowrap;
+  }
+}
+
+.columns-breadcrumb-wrapper {
+  width: 100%;
   overflow: hidden;
-  background:url(../Images/IconHome.gif) no-repeat 0 0;
 }
-.breadCrumb ul li.first a:hover
-{
-  background-position: 0 -16px;
-}
-.breadCrumb ul li.last
-{
-  background: none;
-  margin-right: 0;
-  padding-right: 0;
-}
-.chevronOverlay
-{
-  display: none;
-  background: url(../Images/ChevronOverlay.png) no-repeat 100% 0;
-  width: 13px;
-  height: 20px;
+
+.columns-breadcrumb-ul {
+  margin: 0;
+  padding: 0;
+  width: auto;
+  float: left;
+  li {
+    white-space: nowrap;
+    padding: 10px 20px 10px 10px;
+    list-style: none;
+    @include transition(all .6s);
+    background: white;
+
+    &:after {
+      content: "»";
+      margin-left: 5px;
+      float: right;
+      margin-top: -30px;
+      margin-bottom: -10px;
+      position: relative;
+      left: 17px;
+      padding: 10px 10px 10px 0;
+      background: white;
+    }
+
+    &:last-child:after {
+      display: none !important;
+    }
+
+    &.cut-off {
+      width: 50px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+
+      &:hover {
+        overflow: visible;
+      }
+    }
+  }
 }
 
